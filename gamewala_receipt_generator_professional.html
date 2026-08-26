@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gamewala — Receipt Generator</title>
+<style>
+:root{--bg:#0b0b0d;--panel:#151519;--panel2:#1d1d23;--line:#2d2d35;--text:#f7f7f8;--muted:#a7a7b0;--accent:#ffb400;--accent2:#ff7a00;--green:#21c47b}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top right,#21170a 0,#0b0b0d 38%);color:var(--text);font-family:Inter,Arial,Helvetica,sans-serif}
+.wrap{max-width:1250px;margin:0 auto;padding:28px;display:grid;grid-template-columns:410px 1fr;gap:24px}
+.card{background:rgba(21,21,25,.96);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 18px 60px rgba(0,0,0,.25)}
+.form{position:sticky;top:20px;align-self:start}
+.brandbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.brandmini{font-weight:900;letter-spacing:2px;font-size:20px}.brandmini span{color:var(--accent)}
+h1{font-size:25px;margin:0 0 6px}.sub{color:var(--muted);font-size:14px;line-height:1.5;margin-bottom:20px}
+.section{font-size:12px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);margin:22px 0 8px}
+label{display:block;color:#c8c8ce;font-size:12px;font-weight:700;margin:12px 0 6px}
+input,select,textarea{width:100%;padding:12px 13px;border:1px solid #3a3a43;border-radius:10px;background:#0e0e11;color:#fff;font-size:14px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{min-height:76px;resize:vertical}
+button{width:100%;padding:13px 14px;border:0;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;margin-top:10px;transition:.15s}
+button:hover{transform:translateY(-1px)}
+.primary{background:linear-gradient(90deg,var(--accent2),var(--accent));color:#111}
+.secondary{background:#292930;color:#fff;border:1px solid #3b3b44}
+.email{background:#1f8f61;color:#fff}
+.danger{background:#3a2020;color:#fff}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.actions button{margin-top:10px}
+.help{font-size:11px;color:#888;margin-top:12px;line-height:1.5}
+.receipt-wrap{background:#24242a;border-radius:14px;padding:18px;min-height:100%}
+.receipt{background:#fff;color:#111;max-width:760px;margin:auto;padding:46px;border-radius:8px;min-height:850px;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.rhead{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #151515;padding-bottom:18px}
+.logo{font-size:30px;font-weight:950;letter-spacing:2px}.logo span{color:#e39a00}
+.tag{font-size:10px;color:#777;letter-spacing:1px;margin-top:4px}
+.meta{text-align:right;font-size:11px;color:#555;line-height:1.55}.meta b{color:#111;font-size:13px}
+.title{text-align:center;margin:32px 0 25px;font-size:24px;font-weight:900;letter-spacing:2px}
+.badge{display:inline-block;padding:5px 10px;border-radius:999px;background:#eaf8f1;color:#087443;font-size:10px;font-weight:900;letter-spacing:.6px}
+.row{display:flex;justify-content:space-between;gap:24px;padding:12px 0;border-bottom:1px solid #e2e2e2;font-size:13px}.row strong{text-align:right;max-width:62%;word-break:break-word}
+.total{font-size:24px;font-weight:950;border-bottom:0;padding-top:22px}
+.note{background:#f5f5f5;padding:15px;border-radius:7px;margin-top:24px;font-size:12px;line-height:1.55;white-space:pre-wrap}
+.footer{text-align:center;border-top:1px solid #ddd;margin-top:38px;padding-top:16px;color:#666;font-size:10px;line-height:1.6}
+.empty{color:#999;text-align:center;padding:180px 20px;font-size:14px}
+.toast{position:fixed;right:22px;bottom:22px;background:#202027;color:#fff;border:1px solid #3a3a43;padding:12px 15px;border-radius:10px;opacity:0;transform:translateY(10px);transition:.2s;pointer-events:none;font-size:13px}.toast.show{opacity:1;transform:none}
+@media(max-width:900px){.wrap{grid-template-columns:1fr;padding:14px}.form{position:static}.receipt{padding:28px;min-height:700px}}
+@media print{
+ body{background:#fff}.wrap{display:block;margin:0;padding:0}.form{display:none!important}.card{border:0;padding:0;box-shadow:none}.receipt-wrap{background:#fff;padding:0}.receipt{max-width:none;min-height:auto;border-radius:0;padding:35px;box-shadow:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card form">
+    <div class="brandbar"><div class="brandmini">GAME<span>WALA</span></div><div style="font-size:11px;color:#888">RECEIPTS</div></div>
+    <h1>Receipt Generator</h1>
+    <div class="sub">Create a clean, customer-ready receipt for Gamewala orders. Print it, save it as PDF, or email the receipt details.</div>
+
+    <div class="section">Order</div>
+    <label>Order Number</label><input id="order" placeholder="GW-1001">
+    <label>Date</label><input id="date" type="date">
+
+    <div class="section">Customer</div>
+    <label>Customer Name</label><input id="customer" placeholder="Customer name">
+    <label>Customer Email</label><input id="email" type="email" placeholder="customer@example.com">
+
+    <div class="section">Purchase</div>
+    <label>Product / Game</label><input id="product" placeholder="FC 26 — Steam PC">
+    <label>Platform</label><input id="platform" placeholder="PC / Steam">
+    <label>Price (BDT)</label><input id="price" type="number" step="0.01" placeholder="499">
+
+    <div class="section">Payment</div>
+    <label>Payment Method</label>
+    <select id="payment"><option>bKash</option><option>Nagad</option><option>Bank Transfer</option><option>Cash</option><option>Other</option></select>
+    <label>Payment Reference / Transaction ID</label><input id="txn" placeholder="Optional">
+    <label>Status</label>
+    <select id="status"><option>PAID</option><option>PENDING</option><option>REFUNDED</option></select>
+
+    <label>Notes</label><textarea id="notes" placeholder="Thank you for your purchase!"></textarea>
+
+    <button class="primary" onclick="generate()">Generate Receipt</button>
+    <div class="actions">
+      <button class="secondary" onclick="window.print()">Print / Save PDF</button>
+      <button class="email" onclick="emailReceipt()">Email Receipt</button>
+    </div>
+    <button class="danger" onclick="clearForm()">Clear Form</button>
+    <div class="help">Email Receipt opens the customer's email app with the receipt information already prepared. It does not require a server or password.</div>
+  </div>
+
+  <div class="card receipt-wrap">
+    <div id="preview" class="receipt">
+      <div class="empty">Fill in the order details and click <b>Generate Receipt</b>.</div>
+    </div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+$("date").value=new Date().toISOString().slice(0,10);
+
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+function money(v){return "৳ "+Number(v||0).toLocaleString("en-BD",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function data(){
+ return {
+  order:$("order").value.trim()||"GW-"+Date.now().toString().slice(-6),
+  date:$("date").value||new Date().toISOString().slice(0,10),
+  customer:$("customer").value.trim()||"Customer",
+  email:$("email").value.trim(),
+  product:$("product").value.trim()||"Game Purchase",
+  platform:$("platform").value.trim()||"—",
+  price:$("price").value||0,
+  payment:$("payment").value,
+  txn:$("txn").value.trim()||"—",
+  status:$("status").value,
+  notes:$("notes").value.trim()||"Thank you for your purchase!"
+ };
+}
+function generate(){
+ const d=data();
+ $("preview").innerHTML=`
+  <div class="rhead">
+   <div><div class="logo">GAME<span>WALA</span></div><div class="tag">PLAY MORE. PAY LESS.</div></div>
+   <div class="meta"><b>PURCHASE RECEIPT</b><br>Order: ${esc(d.order)}<br>${esc(d.date)}</div>
+  </div>
+  <div class="title">PURCHASE RECEIPT</div>
+  <div class="row"><span>Customer</span><strong>${esc(d.customer)}</strong></div>
+  <div class="row"><span>Email</span><strong>${esc(d.email||"—")}</strong></div>
+  <div class="row"><span>Product / Game</span><strong>${esc(d.product)}</strong></div>
+  <div class="row"><span>Platform</span><strong>${esc(d.platform)}</strong></div>
+  <div class="row"><span>Payment Method</span><strong>${esc(d.payment)}</strong></div>
+  <div class="row"><span>Transaction ID</span><strong>${esc(d.txn)}</strong></div>
+  <div class="row"><span>Payment Status</span><strong><span class="badge">${esc(d.status)}</span></strong></div>
+  <div class="row total"><span>TOTAL</span><strong>${money(d.price)}</strong></div>
+  <div class="note">${esc(d.notes)}</div>
+  <div class="footer">Gamewala • Trusted Gaming Store<br>WhatsApp: 01805624866 • 24/7 Customer Support</div>
+ `;
+}
+function emailReceipt(){
+ const d=data();
+ if(!d.email){alert("Please enter the customer's email address first."); $("email").focus(); return;}
+ const subject=encodeURIComponent("Gamewala Receipt — "+d.order);
+ const body=encodeURIComponent(
+`GAMEWALA — PURCHASE RECEIPT
+
+Order Number: ${d.order}
+Date: ${d.date}
+
+Customer: ${d.customer}
+Product / Game: ${d.product}
+Platform: ${d.platform}
+Payment Method: ${d.payment}
+Transaction ID: ${d.txn}
+Payment Status: ${d.status}
+
+TOTAL: ${money(d.price)}
+
+${d.notes}
+
+Gamewala — Play More. Pay Less.
+WhatsApp: 01805624866
+24/7 Customer Support`
+ );
+ window.location.href=`mailto:${encodeURIComponent(d.email)}?subject=${subject}&body=${body}`;
+ showToast("Email draft prepared");
+}
+function clearForm(){
+ ["order","customer","email","product","platform","price","txn","notes"].forEach(id=>$(id).value="");
+ $("date").value=new Date().toISOString().slice(0,10);
+ $("payment").value="bKash"; $("status").value="PAID";
+ $("preview").innerHTML='<div class="empty">Fill in the order details and click <b>Generate Receipt</b>.</div>';
+}
+function showToast(t){const x=$("toast");x.textContent=t;x.classList.add("show");setTimeout(()=>x.classList.remove("show"),2200);}
+</script>
+</body>
+</html>
